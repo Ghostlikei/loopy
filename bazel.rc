@@ -1,0 +1,45 @@
+# +------------------------------------------------------------+
+# | Common Options                                             |
+# +------------------------------------------------------------+
+# Force bazel output to use colors (good for jenkins) and print useful errors.
+common --color=yes
+
+# Do not show warnings from external dependencies.
+# build --output_filter="^//"
+
+build --per_file_copt=external/upb/.*@-Wno-sign-compare
+build --copt="-Werror=sign-compare"
+build --copt="-Werror=return-type"
+build --copt="-Werror=unused-variable"
+build --copt="-Werror=unused-but-set-variable"
+build --copt="-Werror=switch"
+build --cxxopt="-Werror=reorder"
+
+# Default paths for SYSTEM LIBRARIES
+build --define=PREFIX=/usr
+build --define=LIBDIR=$(PREFIX)/lib
+build --define=INCLUDEDIR=$(PREFIX)/include
+build --define=use_fast_cpp_protos=true
+
+# Build loopy with C++ 20 features.
+build:c++20 --cxxopt="-std=c++20"
+build:c++20 --host_cxxopt="-std=c++20"
+build:c++20 --define USE_CXX20=true
+
+# Enable C++17 (aka c++1z) by default
+build --cxxopt="-std=c++17"
+build --host_cxxopt="-std=c++17"
+
+# +------------------------------------------------------------+
+# | Test Configurations                                        |
+# +------------------------------------------------------------+
+test --flaky_test_attempts=3
+test --test_size_filters=small,medium
+
+# test --test_env=LD_LIBRARY_PATH
+# test --test_env=PYTHONPATH
+
+# By default prints output only from failed tests.
+test --test_output=errors
+
+test:unit_test --test_verbose_timeout_warnings
